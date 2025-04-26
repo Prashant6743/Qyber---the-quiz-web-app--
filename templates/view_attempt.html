@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results - {{ quiz.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .results-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .quiz-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quiz-description {
+            color: #7f8c8d;
+        }
+        
+        .score-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .score-label {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .score-high {
+            color: #2ecc71;
+        }
+        
+        .score-medium {
+            color: #f39c12;
+        }
+        
+        .score-low {
+            color: #e74c3c;
+        }
+        
+        .score-message {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+        
+        .question-block {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid #dee2e6;
+        }
+        
+        .option-item.correct {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: #2ecc71;
+        }
+        
+        .option-item.incorrect {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+        }
+        
+        .option-icon {
+            font-size: 1rem;
+        }
+        
+        .icon-correct {
+            color: #2ecc71;
+        }
+        
+        .icon-incorrect {
+            color: #e74c3c;
+        }
+        
+        .option-text {
+            font-size: 1rem;
+            color: #2c3e50;
+            flex-grow: 1;
+        }
+        
+        .results-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .attempt-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .results-container {
+                padding: 1.5rem;
+            }
+            
+            .results-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .results-actions .btn-primary,
+            .results-actions .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <div class="results-container">
+            <div class="results-header">
+                <h1 class="quiz-title">{{ quiz.title }} - Results</h1>
+                {% if quiz.description %}
+                    <p class="quiz-description">{{ quiz.description }}</p>
+                {% endif %}
+                <div class="attempt-info">
+                    <span><i class="far fa-calendar-alt"></i> {{ attempt.date_attempted.strftime('%b %d, %Y %I:%M %p') }}</span>
+                </div>
+            </div>
+            
+            <div class="score-card">
+                <div class="score-label">Your Score</div>
+                <div class="score-value {% if attempt.score >= 80 %}score-high{% elif attempt.score >= 60 %}score-medium{% else %}score-low{% endif %}">
+                    {{ "%.1f"|format(attempt.score) }}%
+                </div>
+                <div class="score-message">
+                    {% if attempt.score >= 80 %}
+                        Excellent work! You've mastered this topic.
+                    {% elif attempt.score >= 60 %}
+                        Good job! You're on the right track.
+                    {% else %}
+                        Keep practicing! You'll improve with more study.
+                    {% endif %}
+                </div>
+            </div>
+            
+            <h2>Question Review</h2>
+            {% for question in questions %}
+                <div class="question-block">
+                    <div class="question-text">
+                        <span class="question-number">{{ loop.index }}.</span> {{ question.text }}
+                    </div>
+                    <div class="options-list">
+                        {% for option in question.options %}
+                            {% set is_correct = loop.index0|string == question.correct_answer %}
+                            <div class="option-item {% if is_correct %}correct{% endif %}">
+                                {% if is_correct %}
+                                    <i class="fas fa-check option-icon icon-correct"></i>
+                                {% else %}
+                                    <i class="fas fa-times option-icon icon-incorrect"></i>
+                                {% endif %}
+                                <span class="option-text">{{ option.option_text }}</span>
+                                {% if is_correct %}
+                                    <span class="correct-label">Correct Answer</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <div class="results-actions">
+                <a href="{{ url_for('student_dashboard') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn-primary"><i class="fas fa-redo"></i> Retake Quiz</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

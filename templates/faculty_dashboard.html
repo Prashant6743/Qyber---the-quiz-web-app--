@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - Quiz System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/web3-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/faculty.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz-form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/3d-effects.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <!-- Main Navigation -->
+
+    <div class="dashboard-container">
+        <!-- Dashboard Overview Section -->
+        <section id="dashboard-overview" class="dashboard-section active">
+            <div class="section-title">
+                <h1><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h1>
+                <p class="section-subtitle">Welcome to your faculty dashboard. Here's a summary of your quiz activities.</p>
+            </div>
+            
+            <!-- Spacer div for better positioning -->
+            <div style="height: 30px;"></div>
+            
+            <!-- Quick Stats Cards -->
+            <div class="faculty-quick-stats">
+                <div class="quick-stat">
+                    <i class="fas fa-book-open stat-icon"></i>
+                    <div class="quick-stat-value">{{ stats.total_quizzes }}</div>
+                    <div class="quick-stat-label">Total Quizzes</div>
+                </div>
+                <div class="quick-stat">
+                    <i class="fas fa-question-circle stat-icon"></i>
+                    <div class="quick-stat-value">{{ stats.total_questions }}</div>
+                    <div class="quick-stat-label">Total Questions</div>
+                </div>
+                <div class="quick-stat">
+                    <i class="fas fa-users stat-icon"></i>
+                    <div class="quick-stat-value">{{ stats.total_attempts }}</div>
+                    <div class="quick-stat-label">Student Attempts</div>
+                </div>
+                <div class="quick-stat">
+                    <i class="fas fa-chart-line stat-icon"></i>
+                    <div class="quick-stat-value">{{ stats.avg_score }}%</div>
+                    <div class="quick-stat-label">Average Score</div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity Preview -->
+            <div class="recent-activity-preview">
+                <div class="preview-header">
+                    <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                    <a href="#student-records-section" class="btn-link view-all-btn" onclick="scrollToSection('student-records-section'); return false;">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                {% if recent_attempts %}
+                    <div class="attempts-preview">
+                        {% for attempt in recent_attempts[:3] %}
+                            <div class="attempt-item">
+                                <div class="attempt-info">
+                                    <h3><i class="fas fa-user-graduate"></i> {{ attempt.student.username }} - {{ attempt.quiz.title }}</h3>
+                                    <p><i class="fas fa-percentage"></i> Score: {{ attempt.score }}%</p>
+                                    <p class="attempt-date"><i class="far fa-clock"></i> {{ attempt.date_attempted.strftime('%b %d, %Y %I:%M %p') }}</p>
+                                </div>
+                                <a href="{{ url_for('view_attempt_details', attempt_id=attempt.id) }}" class="btn-secondary"><i class="fas fa-eye"></i> Details</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="no-data"><i class="fas fa-info-circle"></i> No recent activity to show.</p>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <a href="#create-quiz-section" class="action-btn ai-quiz-btn">
+                        <i class="fas fa-robot"></i>
+                        <span>Create AI Quiz</span>
+                    </a>
+                    <a href="#create-quiz-section" class="action-btn manual-quiz-btn">
+                        <i class="fas fa-edit"></i>
+                        <span>Create Manual Quiz</span>
+                    </a>
+                    <a href="#quiz-history-section" class="action-btn history-btn">
+                        <i class="fas fa-list"></i>
+                        <span>View Quiz History</span>
+                    </a>
+                    <a href="#student-records-section" class="action-btn records-btn">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Student Records</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Create Quiz Section -->
+        <section id="create-quiz-section" class="dashboard-section">
+            <div class="section-title">
+                <h1><i class="fas fa-plus-circle"></i> Create New Quiz</h1>
+                <p class="section-subtitle">Create a new quiz using AI generation or manual creation.</p>
+            </div>
+            
+            <div class="create-quiz-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="ai-quiz">
+                        <i class="fas fa-robot"></i> AI-Generated Quiz
+                    </button>
+                    <button class="tab-btn" data-tab="manual-quiz">
+                        <i class="fas fa-edit"></i> Manual Quiz Creation
+                    </button>
+                </div>
+                
+                <!-- AI Quiz Generation Tab -->
+                <div id="ai-quiz-tab" class="tab-content active">
+                    <div class="tab-inner">
+                        <div class="ai-quiz-intro">
+                            <i class="fas fa-robot intro-icon"></i>
+                            <h3>Generate Quiz with AI</h3>
+                            <p>Quickly create a quiz by specifying a topic and difficulty level. Our AI will generate relevant questions and options for you.</p>
+                        </div>
+                        
+                        <form action="{{ url_for('generate_ai_quiz') }}" method="post" class="ai-quiz-form">
+                            <div class="form-group">
+                                <label for="quiz-topic">Topic</label>
+                                <input type="text" id="quiz-topic" name="topic" placeholder="Enter the main topic for the quiz (e.g., Python, Java)" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quiz-difficulty">Difficulty Level</label>
+                                    <select id="quiz-difficulty" name="difficulty">
+                                        <option value="easy">Easy</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="hard">Hard</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quiz-questions">Number of Questions</label>
+                                    <input type="number" id="quiz-questions" name="num_questions" min="5" max="20" value="10">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary"><i class="fas fa-magic"></i> Generate Quiz</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Manual Quiz Creation Tab -->
+                <div id="manual-quiz-tab" class="tab-content">
+                    <div class="tab-inner">
+                        <div class="manual-quiz-intro">
+                            <i class="fas fa-edit intro-icon"></i>
+                            <h3>Create Quiz Manually</h3>
+                            <p>Create a custom quiz by adding your own questions and options. You have full control over the content.</p>
+                        </div>
+                        
+                        <form action="{{ url_for('create_quiz') }}" method="post" id="manual-quiz-form-element" class="manual-quiz-form">
+                            <!-- Spacer for better positioning -->
+                            <div style="height: 40px;"></div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quiz-title">Quiz Title</label>
+                                    <input type="text" id="quiz-title" name="title" placeholder="Enter quiz title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quiz-description">Description</label>
+                                    <textarea id="quiz-description" name="description" rows="3" placeholder="Enter quiz description"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div id="questions-container" class="questions-container">
+                                <!-- Questions will be added here dynamically -->
+                            </div>
+                            
+                            <button type="button" class="add-question-btn" onclick="addQuestion()">
+                                <i class="fas fa-plus"></i> Add New Question
+                            </button>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Create Quiz</button>
+                            </div>
+                            
+                            <!-- Form validation messages will appear here -->
+                            <div id="form-messages"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Quiz History Section -->
+        <section id="quiz-history-section" class="dashboard-section">
+            <div class="section-title">
+                <h1><i class="fas fa-history"></i> Quiz History</h1>
+                <p class="section-subtitle">View and manage all your created quizzes.</p>
+            </div>
+            
+            <div class="quiz-history-container">
+                <div class="quiz-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="quiz-search" placeholder="Search quizzes..." onkeyup="filterQuizzes()">
+                    </div>
+                    <div class="filter-options">
+                        <select id="quiz-sort" onchange="sortQuizzes()">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="most-attempts">Most Attempts</option>
+                            <option value="highest-score">Highest Avg. Score</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="quiz-list-container">
+                    {% if my_quizzes %}
+                        <div class="quiz-list" id="quiz-list">
+                            {% for quiz in my_quizzes %}
+                                <div class="quiz-card" data-created="{{ quiz.created_at.timestamp() }}" data-attempts="{{ quiz.attempts|length }}" data-title="{{ quiz.title|lower }}">
+                                    <div class="quiz-card-header">
+                                        <h3>{{ quiz.title }}</h3>
+                                        <div class="quiz-badge">
+                                            {% if quiz.questions|length >= 10 %}
+                                                <span class="badge badge-success">Comprehensive</span>
+                                            {% elif quiz.questions|length >= 5 %}
+                                                <span class="badge badge-primary">Standard</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">Mini</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="quiz-card-body">
+                                        <p>{{ quiz.description }}</p>
+                                        <div class="quiz-stats">
+                                            <div class="stat">
+                                                <i class="fas fa-question-circle"></i>
+                                                <span>{{ quiz.questions|length }} Questions</span>
+                                            </div>
+                                            <div class="stat">
+                                                <i class="fas fa-users"></i>
+                                                <span>{{ quiz.attempts|length }} Attempts</span>
+                                            </div>
+                                            <div class="stat">
+                                                <i class="far fa-calendar-alt"></i>
+                                                <span>{{ quiz.created_at.strftime('%b %d, %Y') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="quiz-card-actions">
+                                        <a href="{{ url_for('edit_quiz', quiz_id=quiz.id) }}" class="btn-action"><i class="fas fa-edit"></i> Edit</a>
+                                        <a href="{{ url_for('view_quiz_results', quiz_id=quiz.id) }}" class="btn-action"><i class="fas fa-chart-bar"></i> Results</a>
+                                        <button class="btn-action btn-duplicate" data-quiz-id="{{ quiz.id }}"><i class="fas fa-copy"></i> Duplicate</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-quizzes">
+                            <i class="fas fa-folder-open no-data-icon"></i>
+                            <h3>No Quizzes Found</h3>
+                            <p>You haven't created any quizzes yet. Get started by creating your first quiz!</p>
+                            <a href="#create-quiz-section" class="btn-primary"><i class="fas fa-plus"></i> Create New Quiz</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        
+        <!-- Student Records Section -->
+        <section id="student-records-section" class="dashboard-section">
+            <div class="section-title">
+                <h1><i class="fas fa-user-graduate"></i> Student Records</h1>
+                <p class="section-subtitle">View detailed records of student quiz attempts and performance.</p>
+            </div>
+            
+            <div class="student-records-container">
+                <div class="records-tabs">
+                    <button class="record-tab active" data-tab="recent-attempts">Recent Attempts</button>
+                    <button class="record-tab" data-tab="student-performance">Student Performance</button>
+                    <button class="record-tab" data-tab="quiz-analytics">Quiz Analytics</button>
+                </div>
+                
+                <!-- Recent Attempts Tab -->
+                <div id="recent-attempts-tab" class="record-content active">
+                    {% if recent_attempts %}
+                        <div class="attempts-list">
+                            {% for attempt in recent_attempts %}
+                                <div class="attempt-card">
+                                    <div class="attempt-header">
+                                        <div class="student-info">
+                                            <i class="fas fa-user-circle"></i>
+                                            <h3>{{ attempt.student.username }}</h3>
+                                        </div>
+                                        <div class="score-badge {% if attempt.score >= 80 %}high-score{% elif attempt.score >= 60 %}medium-score{% else %}low-score{% endif %}">
+                                            {{ attempt.score }}%
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="attempt-details">
+                                        <div class="quiz-title">
+                                            <i class="fas fa-book"></i>
+                                            <span>{{ attempt.quiz.title }}</span>
+                                        </div>
+                                        <div class="attempt-time">
+                                            <i class="far fa-clock"></i>
+                                            <span>{{ attempt.date_attempted.strftime('%b %d, %Y %I:%M %p') }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="attempt-actions">
+                                        <a href="{{ url_for('view_attempt_details', attempt_id=attempt.id) }}" class="btn-primary">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-data-container">
+                            <i class="fas fa-clipboard-list no-data-icon"></i>
+                            <h3>No Attempts Yet</h3>
+                            <p>There are no quiz attempts by students yet. Once students take your quizzes, their attempts will appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Student Performance Tab -->
+                <div id="student-performance-tab" class="record-content">
+                    <div class="performance-summary">
+                        <h3>Student Performance Overview</h3>
+                        <div class="performance-stats">
+                            <div class="performance-stat">
+                                <div class="stat-value">{{ stats.total_attempts }}</div>
+                                <div class="stat-label">Total Attempts</div>
+                            </div>
+                            <div class="performance-stat">
+                                <div class="stat-value">{{ stats.avg_score }}%</div>
+                                <div class="stat-label">Average Score</div>
+                            </div>
+                            <div class="performance-stat">
+                                <div class="stat-value">
+                                    {% if recent_attempts %}
+                                        {% set high_scores = recent_attempts|selectattr('score', 'ge', 80)|list|length %}
+                                        {{ (high_scores / recent_attempts|length * 100)|round|int }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </div>
+                                <div class="stat-label">High Scores (80%+)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="student-list-container">
+                        <h3>Student List</h3>
+                        <p>Select a student to view their detailed performance.</p>
+                        
+                        <div class="student-list">
+                            <!-- This would be populated with actual student data -->
+                            <div class="student-item">
+                                <div class="student-name">Sample Student</div>
+                                <div class="student-attempts">5 Attempts</div>
+                                <div class="student-avg-score">78%</div>
+                                <button class="btn-view">View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Analytics Tab -->
+                <div id="quiz-analytics-tab" class="record-content">
+                    <div class="analytics-summary">
+                        <h3>Quiz Performance Analytics</h3>
+                        <p>Select a quiz to view detailed analytics about student performance.</p>
+                        
+                        {% if my_quizzes %}
+                            <div class="quiz-select">
+                                <label for="analytics-quiz-select">Select Quiz:</label>
+                                <select id="analytics-quiz-select">
+                                    <option value="">-- Select a Quiz --</option>
+                                    {% for quiz in my_quizzes %}
+                                        <option value="{{ quiz.id }}">{{ quiz.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="analytics-placeholder">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>Select a quiz to view its analytics</p>
+                            </div>
+                        {% else %}
+                            <div class="no-data-container">
+                                <i class="fas fa-chart-bar no-data-icon"></i>
+                                <h3>No Quizzes Available</h3>
+                                <p>Create quizzes first to view analytics.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Global variables
+        let questionCounter = 0;
+        
+        // Navigation and Section Display
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.dashboard-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    // Update active nav link
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target section, hide others
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // Quick action buttons
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    // Update navigation
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === '#' + targetId) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    });
+                    
+                    // Show target section
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    targetSection.classList.add('active');
+                    
+                    // Special handling for quiz creation buttons
+                    if (this.classList.contains('ai-quiz-btn')) {
+                        document.querySelector('[data-tab="ai-quiz"]').click();
+                    } else if (this.classList.contains('manual-quiz-btn')) {
+                        document.querySelector('[data-tab="manual-quiz"]').click();
+                    }
+                });
+            });
+            
+            // Tab functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabGroup = this.closest('.tab-buttons');
+                    const tabContainer = this.closest('.create-quiz-tabs');
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    tabGroup.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show target tab content
+                    tabContainer.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabName + '-tab').classList.add('active');
+                    
+                    // Add first question automatically for manual quiz
+                    if (tabName === 'manual-quiz' && questionCounter === 0) {
+                        addQuestion();
+                    }
+                });
+            });
+            
+            // Records tab functionality
+            const recordTabs = document.querySelectorAll('.record-tab');
+            recordTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    const tabContainer = this.closest('.student-records-container');
+                    
+                    // Update active tab
+                    recordTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target content
+                    tabContainer.querySelectorAll('.record-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabName + '-tab').classList.add('active');
+                });
+            });
+        });
+        
+        // Question Management Functions
+        function addQuestion() {
+            const questionsContainer = document.getElementById('questions-container');
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-block';
+            questionCounter++;
+
+            questionDiv.innerHTML = `
+                <div class="question-header">
+                    <h4>Question ${questionCounter}</h4>
+                    <button type="button" class="btn-danger remove-question" onclick="removeQuestion(this)">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-question-circle"></i> Question Text</label>
+                    <textarea name="questions[]" rows="2" placeholder="Enter your question" required></textarea>
+                </div>
+                <div class="options-container">
+                    <label><i class="fas fa-list-ul"></i> Options <small>(select the correct answer)</small></label>
+                    <div class="option-row">
+                        <input type="radio" name="correct_answers[${questionCounter-1}]" value="0" required checked>
+                        <input type="text" name="options[]" placeholder="Option 1" required>
+                        <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Remove option">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correct_answers[${questionCounter-1}]" value="1">
+                        <input type="text" name="options[]" placeholder="Option 2" required>
+                        <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Remove option">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correct_answers[${questionCounter-1}]" value="2">
+                        <input type="text" name="options[]" placeholder="Option 3" required>
+                        <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Remove option">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correct_answers[${questionCounter-1}]" value="3">
+                        <input type="text" name="options[]" placeholder="Option 4" required>
+                        <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Remove option">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button type="button" class="add-option-btn" onclick="addOption(this, ${questionCounter-1})" title="Add another option">
+                        <i class="fas fa-plus"></i> Add Option
+                    </button>
+                </div>
+            `;
+
+            questionsContainer.appendChild(questionDiv);
+            updateQuestionNumbers();
+        }
+
+        function removeQuestion(button) {
+            const questionBlock = button.closest('.question-block');
+            
+            // Add fade-out animation
+            questionBlock.style.opacity = '0';
+            questionBlock.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                questionBlock.remove();
+                questionCounter--;
+                updateQuestionNumbers();
+            }, 300);
+        }
+        
+        function addOption(button, questionIndex) {
+            const optionsContainer = button.closest('.options-container');
+            const optionRows = optionsContainer.querySelectorAll('.option-row');
+            const newOptionValue = optionRows.length;
+            
+            const newOptionRow = document.createElement('div');
+            newOptionRow.className = 'option-row';
+            newOptionRow.innerHTML = `
+                <input type="radio" name="correct_answers[${questionIndex}]" value="${newOptionValue}">
+                <input type="text" name="options[]" placeholder="Option ${newOptionValue + 1}" required>
+                <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Remove option">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Insert before the add button
+            optionsContainer.insertBefore(newOptionRow, button);
+            
+            // Add animation
+            newOptionRow.style.opacity = '0';
+            newOptionRow.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                newOptionRow.style.opacity = '1';
+                newOptionRow.style.transform = 'translateY(0)';
+            }, 10);
+        }
+        
+        function removeOption(button) {
+            const optionRow = button.closest('.option-row');
+            const optionsContainer = optionRow.closest('.options-container');
+            const optionRows = optionsContainer.querySelectorAll('.option-row');
+            
+            // Don't allow removing if only 2 options remain
+            if (optionRows.length <= 2) {
+                alert('A question must have at least 2 options.');
+                return;
+            }
+            
+            // Add fade-out animation
+            optionRow.style.opacity = '0';
+            optionRow.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                optionRow.remove();
+                updateOptionValues(optionsContainer);
+            }, 300);
+        }
+        
+        function updateOptionValues(container) {
+            const questionIndex = container.querySelector('input[type="radio"]').name.match(/\d+/)[0];
+            const optionRows = container.querySelectorAll('.option-row');
+            
+            optionRows.forEach((row, index) => {
+                const radio = row.querySelector('input[type="radio"]');
+                radio.value = index;
+                
+                const textInput = row.querySelector('input[type="text"]');
+                textInput.placeholder = `Option ${index + 1}`;
+            });
+        }
+
+        function updateQuestionNumbers() {
+            const questions = document.querySelectorAll('.question-block');
+            questions.forEach((question, index) => {
+                const header = question.querySelector('h4');
+                header.textContent = `Question ${index + 1}`;
+                
+                // Update radio button names
+                const radioButtons = question.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    radio.name = `correct_answers[${index}]`;
+                });
+            });
+        }
+        
+        // Quiz History Functions
+        function filterQuizzes() {
+            const searchInput = document.getElementById('quiz-search');
+            const filter = searchInput.value.toLowerCase();
+            const quizCards = document.querySelectorAll('#quiz-list .quiz-card');
+            let resultsFound = false;
+            
+            quizCards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                const titleElement = card.querySelector('h3');
+                const description = card.querySelector('.quiz-card-body p')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(filter) || description.includes(filter)) {
+                    card.style.display = '';
+                    resultsFound = true;
+                    
+                    // Highlight matching text in title if found
+                    if (titleElement && filter.length > 0 && title.includes(filter)) {
+                        const originalText = titleElement.textContent;
+                        const lowerText = originalText.toLowerCase();
+                        const index = lowerText.indexOf(filter);
+                        
+                        if (index >= 0) {
+                            const before = originalText.substring(0, index);
+                            const match = originalText.substring(index, index + filter.length);
+                            const after = originalText.substring(index + filter.length);
+                            titleElement.innerHTML = before + '<span class="highlight">' + match + '</span>' + after;
+                        }
+                    }
+                } else {
+                    card.style.display = 'none';
+                    // Reset highlighting
+                    if (titleElement) {
+                        titleElement.innerHTML = titleElement.textContent;
+                    }
+                }
+            });
+            
+            // Show no results message if needed
+            const noResultsMessage = document.getElementById('no-search-results');
+            if (!noResultsMessage) {
+                const listContainer = document.querySelector('.quiz-list-container');
+                const messageDiv = document.createElement('div');
+                messageDiv.id = 'no-search-results';
+                messageDiv.className = 'no-results-message';
+                messageDiv.innerHTML = '<i class="fas fa-search"></i><p>No quizzes found matching your search.</p>';
+                messageDiv.style.display = 'none';
+                listContainer.appendChild(messageDiv);
+            }
+            
+            document.getElementById('no-search-results').style.display = !resultsFound && filter.length > 0 ? 'flex' : 'none';
+        }
+        
+        function sortQuizzes() {
+            const sortSelect = document.getElementById('quiz-sort');
+            const sortValue = sortSelect.value;
+            const quizList = document.getElementById('quiz-list');
+            const quizCards = Array.from(quizList.querySelectorAll('.quiz-card'));
+            
+            quizCards.sort((a, b) => {
+                if (sortValue === 'newest') {
+                    return parseFloat(b.getAttribute('data-created')) - parseFloat(a.getAttribute('data-created'));
+                } else if (sortValue === 'oldest') {
+                    return parseFloat(a.getAttribute('data-created')) - parseFloat(b.getAttribute('data-created'));
+                } else if (sortValue === 'most-attempts') {
+                    return parseInt(b.getAttribute('data-attempts')) - parseInt(a.getAttribute('data-attempts'));
+                }
+                return 0;
+            });
+            
+            // Re-append sorted cards
+            quizCards.forEach(card => {
+                quizList.appendChild(card);
+            });
+        }
+        
+        // Add event listeners to duplicate buttons
+        document.querySelectorAll('.btn-duplicate').forEach(button => {
+            button.addEventListener('click', function() {
+                const quizId = this.getAttribute('data-quiz-id');
+                alert(`Duplicating quiz ${quizId}. This feature will be implemented soon.`);
+                // This would be implemented with an AJAX call to a backend route
+            });
+        });
+
+        // Form validation
+        document.getElementById('manual-quiz-form-element')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (questionCounter === 0) {
+                alert('Please add at least one question to the quiz.');
+                return;
+            }
+            
+            // Validate all required fields
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+            
+            if (isValid) {
+                this.submit();
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/3d-effects.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/button-effects.js') }}"></script>
+    
+    <!-- Smooth scrolling function for View All button -->
+    <script>
+    function scrollToSection(sectionId) {
+        // Get the section element
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+        
+        // Get all nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        // Remove active class from all links
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Add active class to the matching link
+        const targetLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+        
+        // Get all sections
+        const sections = document.querySelectorAll('.dashboard-section');
+        
+        // Hide all sections
+        sections.forEach(s => {
+            s.classList.remove('active');
+        });
+        
+        // Show the target section
+        section.classList.add('active');
+        
+        // Scroll to the section with smooth animation
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Add visual feedback to the View All button
+        const viewAllBtn = document.querySelector('.view-all-btn');
+        if (viewAllBtn) {
+            viewAllBtn.classList.add('active');
+            
+            // Remove the active class after 2 seconds
+            setTimeout(() => {
+                viewAllBtn.classList.remove('active');
+            }, 2000);
+        }
+    }
+    </script>
+    <script src="{{ url_for('static', filename='js/web3-particles.js') }}"></script>
+
+    <!-- Web3 dashboard animation effects -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover glow effect on elements
+        document.querySelectorAll('.quick-stat, .quiz-card, .attempt-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 8px 32px rgba(59, 130, 246, 0.15)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+            });
+        });
+        
+        // Animated entrance for dashboard sections
+        const sections = document.querySelectorAll('.dashboard-section');
+        sections.forEach((section) => {
+            if (section.classList.contains('active')) {
+                const elements = section.querySelectorAll('.quick-stat, .preview-header, .action-btn');
+                elements.forEach((el, index) => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 100 * (index + 1));
+                });
+            }
+        });
+        
+        // Animate stats on section activation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const targetId = this.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    setTimeout(() => {
+                        const section = document.querySelector(targetId);
+                        if (section) {
+                            const elements = section.querySelectorAll('.quick-stat, .tab-btn, .form-actions');
+                            elements.forEach((el, index) => {
+                                el.style.opacity = '0';
+                                el.style.transform = 'translateY(20px)';
+                                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                
+                                setTimeout(() => {
+                                    el.style.opacity = '1';
+                                    el.style.transform = 'translateY(0)';
+                                }, 100 * (index + 1));
+                            });
+                        }
+                    }, 100);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz - {{ quiz.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .quiz-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quiz-description {
+            color: #7f8c8d;
+        }
+        
+        .question-block {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-item:hover {
+            background: #e9ecef;
+        }
+        
+        .option-item input[type="radio"] {
+            margin: 0;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+        
+        .option-text {
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        
+        .quiz-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .timer-container {
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        
+        .timer-icon {
+            color: #e74c3c;
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h1 class="quiz-title">{{ quiz.title }}</h1>
+                {% if quiz.description %}
+                    <p class="quiz-description">{{ quiz.description }}</p>
+                {% endif %}
+                <div class="timer-container">
+                    <i class="fas fa-clock timer-icon"></i>
+                    <span id="timer">Time remaining: <span id="time-display">--:--</span></span>
+                </div>
+            </div>
+            
+            <form action="{{ url_for('take_quiz', quiz_id=quiz.id) }}" method="post" id="quiz-form">
+                {% for question in questions %}
+                    <div class="question-block">
+                        <div class="question-text">
+                            <span class="question-number">{{ loop.index }}.</span> {{ question.text }}
+                        </div>
+                        <div class="options-list">
+                            {% for option in question.options %}
+                                <label class="option-item">
+                                    <input type="radio" name="question_{{ question.id }}" value="{{ loop.index0 }}" required>
+                                    <span class="option-text">{{ option.option_text }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <div class="quiz-actions">
+                    <a href="{{ url_for('student_dashboard') }}" class="btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+                    <button type="submit" class="btn-primary"><i class="fas fa-check"></i> Submit Answers</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Simple timer functionality (30 minutes)
+        const timerDisplay = document.getElementById('time-display');
+        let timeLeft = 30 * 60; // 30 minutes in seconds
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Your answers will be submitted automatically.');
+                document.getElementById('quiz-form').submit();
+            }
+            
+            timeLeft--;
+        }
+        
+        // Update timer immediately and then every second
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+        
+        // Form validation
+        document.getElementById('quiz-form').addEventListener('submit', function(e) {
+            const radioGroups = document.querySelectorAll('input[type="radio"][required]');
+            const groupNames = new Set();
+            
+            radioGroups.forEach(radio => {
+                groupNames.add(radio.name);
+            });
+            
+            let allAnswered = true;
+            
+            groupNames.forEach(name => {
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
+                if (!checked) {
+                    allAnswered = false;
+                }
+            });
+            
+            if (!allAnswered) {
+                e.preventDefault();
+                alert('Please answer all questions before submitting.');
+            }
+        });
+    </script>
+</body>
+</html>

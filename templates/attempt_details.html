@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attempt Details - Quiz System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/web3-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/3d-effects.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .attempt-details-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .attempt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .attempt-title h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .attempt-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .attempt-score {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .score-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        
+        .questions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .question-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .question-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .status-correct {
+            background: rgba(34, 197, 94, 0.9);
+        }
+        
+        .status-incorrect {
+            background: rgba(239, 68, 68, 0.9);
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            padding-right: 2.5rem;
+        }
+        
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .option-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .option-correct {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .option-incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .option-neutral {
+            background: rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .option-selected {
+            border-width: 2px;
+        }
+        
+        .option-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .icon-correct {
+            background: rgba(34, 197, 94, 0.9);
+        }
+        
+        .icon-incorrect {
+            background: rgba(239, 68, 68, 0.9);
+        }
+        
+        .icon-neutral {
+            background: rgba(148, 163, 184, 0.5);
+        }
+        
+        .back-button {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            background: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.15);
+        }
+        
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 3px solid var(--accent-blue);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .attempt-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .attempt-score {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <div class="attempt-details-container">
+        <div class="attempt-header">
+            <div class="attempt-title">
+                <h1>{{ quiz.title }}</h1>
+                <div class="attempt-meta">
+                    <p><i class="fas fa-user-graduate"></i> {{ attempt.student.username }}</p>
+                    <p><i class="far fa-clock"></i> {{ attempt.date_attempted.strftime('%b %d, %Y %I:%M %p') }}</p>
+                </div>
+            </div>
+            
+            <div class="attempt-score">
+                <div class="score-value">{{ attempt.score }}%</div>
+                <div class="score-label">Score</div>
+            </div>
+        </div>
+        
+        <div class="questions-list">
+            {% for question in quiz.questions %}
+                <div class="question-card">
+                    {% if question.id in correct_answers %}
+                        <div class="question-status status-correct">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    {% else %}
+                        <div class="question-status status-incorrect">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="question-text">{{ question.question_text }}</div>
+                    
+                    <div class="options-list">
+                        {% for option in question.options %}
+                            {% if option.option_text == question.correct_answer and option.option_text == student_answers.get(question.id, '') %}
+                                <!-- Correct answer and student selected it -->
+                                <div class="option-item option-correct option-selected">
+                                    <div class="option-icon icon-correct"><i class="fas fa-check"></i></div>
+                                    <div class="option-text">{{ option.option_text }}</div>
+                                </div>
+                            {% elif option.option_text == question.correct_answer %}
+                                <!-- Correct answer but student didn't select it -->
+                                <div class="option-item option-correct">
+                                    <div class="option-icon icon-correct"><i class="fas fa-check"></i></div>
+                                    <div class="option-text">{{ option.option_text }}</div>
+                                </div>
+                            {% elif option.option_text == student_answers.get(question.id, '') %}
+                                <!-- Incorrect answer that student selected -->
+                                <div class="option-item option-incorrect option-selected">
+                                    <div class="option-icon icon-incorrect"><i class="fas fa-times"></i></div>
+                                    <div class="option-text">{{ option.option_text }}</div>
+                                </div>
+                            {% else %}
+                                <!-- Other options -->
+                                <div class="option-item option-neutral">
+                                    <div class="option-icon icon-neutral"></div>
+                                    <div class="option-text">{{ option.option_text }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    {% if question.id not in correct_answers %}
+                        <div class="explanation">
+                            <strong>Correct Answer:</strong> {{ question.correct_answer }}<br>
+                            <strong>Your Answer:</strong> {{ student_answers.get(question.id, 'Not answered') }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if session.get('role') == 'faculty' %}
+            <a href="{{ url_for('faculty_dashboard') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('student_dashboard') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% endif %}
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/web3-particles.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/button-effects.js') }}"></script>
+</body>
+</html>

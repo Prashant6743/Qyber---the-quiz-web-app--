@@ -1,0 +1,67 @@
+Online Quiz Website - Project Plan
+
+1. Basic Setup
+   - Set up Flask environment
+   - Create basic project structure
+   - Set up version control (Git)
+
+2. Database Design
+   - User table (id, username, email, password)
+   - Quiz table (id, title, description, creator_id)
+   - Question table (id, quiz_id, question_text, correct_answer)
+   - Options table (id, question_id, option_text)
+   - User_Responses table (user_id, question_id, selected_answer)
+
+3. Authentication System
+   - User registration
+   - User login
+   - User logout
+   - Password hashing
+   - Session management
+
+4. Quiz Management
+   - Create quiz (for teachers/admins)
+   - Add questions and options
+   - Edit quiz
+   - Delete quiz
+   - List all quizzes
+
+5. Quiz Taking System
+   - Display available quizzes
+   - Quiz attempt mechanism
+   - Timer functionality
+   - Submit answers
+   - Show results
+
+6. User Interface
+   - Responsive design
+   - Clean and modern UI
+   - Easy navigation
+   - Mobile-friendly layout
+
+7. Additional Features (Future)
+   - Score history
+   - Quiz categories
+   - Leaderboard
+   - Progress tracking
+   - Quiz sharing
+
+Technology Stack:
+- Backend: Python Flask
+- Database: SQLAlchemy with SQLite
+- Frontend: HTML, CSS, JavaScript
+- Authentication: Flask-Login
+- Forms: Flask-WTF
+
+Project Structure:
+/quiz_website
+    /static
+        /css
+        /js
+        /images
+    /templates
+    /models
+    /routes
+    app.py
+    config.py
+    requirements.txt

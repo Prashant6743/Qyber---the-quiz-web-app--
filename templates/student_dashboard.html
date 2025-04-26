@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Quiz System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/web3-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/3d-effects.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .student-dashboard {
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .quiz-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .quiz-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .quiz-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-info {
+            flex: 1;
+        }
+        
+        .quiz-info h3 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .quiz-info p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .quiz-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .attempts-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .attempt-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .attempt-info {
+            flex: 1;
+        }
+        
+        .attempt-info h3 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .attempt-info p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .score-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .score-high {
+            background: #2ecc71;
+        }
+        
+        .score-medium {
+            background: #f39c12;
+        }
+        
+        .score-low {
+            background: #e74c3c;
+        }
+        
+        .attempt-date {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+        
+        .btn-secondary {
+            background: #e9ecef;
+            color: #2c3e50;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            color: #e9ecef;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .student-dashboard {
+                padding: 1rem;
+            }
+            
+            .quiz-item, .attempt-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .quiz-item a, .attempt-item a {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.6rem;
+            }
+            
+            .nav-user {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <div class="student-dashboard">
+        <div class="dashboard-header">
+            <h1>Student Dashboard</h1>
+            <p>Welcome to your learning portal. Take quizzes and track your progress.</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Available Quizzes Section -->
+            <div id="available-quizzes" class="dashboard-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-book"></i> Available Quizzes</h2>
+                </div>
+                
+                {% if available_quizzes %}
+                    <div class="quiz-list">
+                        {% for quiz in available_quizzes %}
+                            <div class="quiz-item">
+                                <div class="quiz-info">
+                                    <h3>{{ quiz.title }}</h3>
+                                    <p>{{ quiz.description }}</p>
+                                    <div class="quiz-meta">
+                                        <div class="meta-item">
+                                            <i class="fas fa-question-circle"></i>
+                                            <span>{{ quiz.questions|length }} Questions</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="far fa-clock"></i>
+                                            <span>{{ quiz.questions|length }} min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn-primary">
+                                    <i class="fas fa-play"></i> Start Quiz
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-data">
+                        <i class="fas fa-book-open"></i>
+                        <p>No quizzes available at the moment. Check back later!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Recent Attempts Section -->
+            <div id="my-attempts" class="dashboard-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Your Recent Attempts</h2>
+                </div>
+                
+                {% if recent_attempts %}
+                    <div class="attempts-list">
+                        {% for attempt in recent_attempts %}
+                            <div class="attempt-item">
+                                <div class="attempt-info">
+                                    <h3>{{ attempt.quiz.title }}</h3>
+                                    <p>
+                                        <span class="score-badge {% if attempt.score >= 80 %}score-high{% elif attempt.score >= 60 %}score-medium{% else %}score-low{% endif %}">
+                                            {{ attempt.score }}%
+                                        </span>
+                                        <span class="attempt-date">
+                                            <i class="far fa-calendar-alt"></i> 
+                                            {{ attempt.date_attempted.strftime('%b %d, %Y %I:%M %p') }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <a href="{{ url_for('view_attempt', attempt_id=attempt.id) }}" class="btn-secondary">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-data">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No attempts yet. Start a quiz to see your results here!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/web3-particles.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/3d-effects.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/button-effects.js') }}"></script>
+
+    <!-- Web3 dashboard animation effects -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover glow effect on quiz items
+        document.querySelectorAll('.quiz-item, .attempt-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 8px 32px rgba(59, 130, 246, 0.15)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+            });
+        });
+        
+        // Animated entrance for dashboard cards
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 * (index + 1));
+        });
+    });
+    </script>
+</body>
+</html>

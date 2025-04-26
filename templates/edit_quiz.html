@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quiz - Quiz System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/faculty.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .quiz-editor {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        
+        .question-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .question-item {
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .question-item:hover {
+            background: #e9ecef;
+        }
+        
+        .question-item.active {
+            background: #e3f2fd;
+            border-left: 3px solid #3498db;
+        }
+        
+        .question-editor {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .options-list {
+            margin-top: 1rem;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .option-item input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        .option-input {
+            flex-grow: 1;
+        }
+        
+        .add-option-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .add-option-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .remove-option {
+            color: #e74c3c;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h1><i class="fas fa-edit"></i> Edit Quiz: {{ quiz.title }}</h1>
+            <a href="{{ url_for('faculty_dashboard') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+        
+        <div class="quiz-details">
+            <p>{{ quiz.description }}</p>
+            <div class="quiz-meta">
+                <span><i class="far fa-calendar-alt"></i> Created: {{ quiz.created_at.strftime('%b %d, %Y') }}</span>
+                <span><i class="fas fa-question"></i> Questions: {{ questions|length }}</span>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Quiz Editor</h2>
+                <button id="add-question-btn" class="btn-primary"><i class="fas fa-plus"></i> Add Question</button>
+            </div>
+            
+            {% if questions %}
+                <div class="quiz-editor">
+                    <div class="question-list">
+                        {% for question in questions %}
+                            <div class="question-item" data-question-id="{{ question.id }}">
+                                <div class="question-number">Question {{ loop.index }}</div>
+                                <div class="question-preview">{{ question.question_text|truncate(50) }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="question-editor">
+                        <div id="question-form-container">
+                            <div class="empty-state">
+                                <i class="fas fa-arrow-left fa-2x"></i>
+                                <p>Select a question from the list or add a new question</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-question-circle fa-3x"></i>
+                    <h3>No Questions Yet</h3>
+                    <p>Start by adding your first question to this quiz</p>
+                    <button id="start-adding-btn" class="btn-primary"><i class="fas fa-plus"></i> Add First Question</button>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- New Question Form Template (Hidden) -->
+        <div id="new-question-template" style="display: none;">
+            <form id="add-question-form" action="{{ url_for('add_question', quiz_id=quiz.id) }}" method="post">
+                <div class="form-group">
+                    <label for="question_text">Question</label>
+                    <textarea id="question_text" name="question_text" rows="3" placeholder="Enter your question" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Options</label>
+                    <div class="options-list" id="options-container">
+                        <div class="option-item">
+                            <input type="radio" name="correct_answer" value="option1" id="option1" checked>
+                            <input type="text" class="option-input" name="options" placeholder="Option 1" required>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                        <div class="option-item">
+                            <input type="radio" name="correct_answer" value="option2" id="option2">
+                            <input type="text" class="option-input" name="options" placeholder="Option 2" required>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+                    <button type="button" id="add-option-btn" class="add-option-btn">
+                        <i class="fas fa-plus-circle"></i> Add Another Option
+                    </button>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="cancel-question-btn" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Question</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Add question button functionality
+        document.getElementById('add-question-btn')?.addEventListener('click', showNewQuestionForm);
+        document.getElementById('start-adding-btn')?.addEventListener('click', showNewQuestionForm);
+        document.getElementById('cancel-question-btn')?.addEventListener('click', hideNewQuestionForm);
+        
+        // Add option button functionality
+        document.getElementById('add-option-btn')?.addEventListener('click', addNewOption);
+        
+        // Remove option functionality
+        document.querySelectorAll('.remove-option').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (document.querySelectorAll('.option-item').length > 2) {
+                    this.closest('.option-item').remove();
+                    updateOptionIds();
+                } else {
+                    alert('A question must have at least 2 options');
+                }
+            });
+        });
+        
+        // Question list item click functionality
+        document.querySelectorAll('.question-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Here you would load the question data for editing
+                // For now, we'll just show a placeholder
+                document.querySelectorAll('.question-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                const questionId = this.dataset.questionId;
+                // You would fetch the question data and populate the form
+                // For now, just show a message
+                document.getElementById('question-form-container').innerHTML = `
+                    <div class="form-group">
+                        <label>Question</label>
+                        <textarea rows="3" placeholder="Question text would load here"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Options</label>
+                        <div class="options-list">
+                            <div class="option-item">
+                                <input type="radio" checked>
+                                <input type="text" class="option-input" value="Option text would load here">
+                            </div>
+                            <div class="option-item">
+                                <input type="radio">
+                                <input type="text" class="option-input" value="Another option would load here">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-secondary">Delete Question</button>
+                        <button class="btn-primary">Update Question</button>
+                    </div>
+                `;
+            });
+        });
+        
+        function showNewQuestionForm() {
+            const template = document.getElementById('new-question-template').innerHTML;
+            document.getElementById('question-form-container').innerHTML = template;
+            
+            // Re-attach event listeners for the new form
+            document.getElementById('cancel-question-btn').addEventListener('click', hideNewQuestionForm);
+            document.getElementById('add-option-btn').addEventListener('click', addNewOption);
+            
+            document.querySelectorAll('.remove-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (document.querySelectorAll('.option-item').length > 2) {
+                        this.closest('.option-item').remove();
+                        updateOptionIds();
+                    } else {
+                        alert('A question must have at least 2 options');
+                    }
+                });
+            });
+            
+            // Clear any active question selection
+            document.querySelectorAll('.question-item').forEach(i => i.classList.remove('active'));
+        }
+        
+        function hideNewQuestionForm() {
+            document.getElementById('question-form-container').innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-arrow-left fa-2x"></i>
+                    <p>Select a question from the list or add a new question</p>
+                </div>
+            `;
+        }
+        
+        function addNewOption() {
+            const optionsContainer = document.getElementById('options-container');
+            const optionCount = optionsContainer.querySelectorAll('.option-item').length + 1;
+            
+            const newOption = document.createElement('div');
+            newOption.className = 'option-item';
+            newOption.innerHTML = `
+                <input type="radio" name="correct_answer" value="option${optionCount}" id="option${optionCount}">
+                <input type="text" class="option-input" name="options" placeholder="Option ${optionCount}" required>
+                <span class="remove-option"><i class="fas fa-times"></i></span>
+            `;
+            
+            optionsContainer.appendChild(newOption);
+            
+            // Add event listener to the new remove button
+            newOption.querySelector('.remove-option').addEventListener('click', function() {
+                if (optionsContainer.querySelectorAll('.option-item').length > 2) {
+                    this.closest('.option-item').remove();
+                    updateOptionIds();
+                } else {
+                    alert('A question must have at least 2 options');
+                }
+            });
+        }
+        
+        function updateOptionIds() {
+            const options = document.querySelectorAll('.option-item');
+            options.forEach((option, index) => {
+                const radio = option.querySelector('input[type="radio"]');
+                const optionNumber = index + 1;
+                radio.id = `option${optionNumber}`;
+                radio.value = `option${optionNumber}`;
+                
+                const input = option.querySelector('.option-input');
+                input.placeholder = `Option ${optionNumber}`;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+$ pip install flask flask-sqlalchemy
+
+python3 app.py
+
+python app.py

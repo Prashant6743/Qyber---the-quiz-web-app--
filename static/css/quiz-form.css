@@ -1,0 +1,378 @@
+/* Advanced Web3 Quiz Form Styling */
+:root {
+    --form-bg: rgba(0, 0, 0, 0.6);
+    --input-bg: rgba(255, 255, 255, 0.7);
+    --input-border: rgba(59, 130, 246, 0.2);
+    --input-focus: rgba(59, 130, 246, 0.5);
+    --label-color: rgba(248, 250, 252, 0.8);
+    --placeholder-color: rgba(255, 255, 255, 0.7);
+    --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    --accent-glow: 0 0 15px rgba(59, 130, 246, 0.4);
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+}
+
+/* Form Container */
+.manual-quiz-form {
+    background: var(--form-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.manual-quiz-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--accent-gradient);
+    z-index: 1;
+}
+
+/* Form Row & Groups */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    padding-top: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Labels */
+.manual-quiz-form label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--label-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+/* Inputs & Textareas */
+.manual-quiz-form input[type="text"],
+.manual-quiz-form input[type="number"],
+.manual-quiz-form textarea,
+.manual-quiz-form select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.manual-quiz-form input::placeholder,
+.manual-quiz-form textarea::placeholder {
+    color: var(--placeholder-color);
+}
+
+.manual-quiz-form input:focus,
+.manual-quiz-form textarea:focus,
+.manual-quiz-form select:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: var(--accent-glow);
+    transform: translateY(-2px);
+}
+
+/* Questions Container */
+.questions-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Question Block */
+.question-block {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    position: relative;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease;
+}
+
+.question-block:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Question Header */
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.question-header h4 {
+    color: #f8fafc;
+    font-size: 1.1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.question-header h4::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-gradient);
+    border-radius: 50%;
+}
+
+/* Options Container */
+.options-container {
+    margin-top: 1.5rem;
+}
+
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+}
+
+.option-row:hover {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.option-row input[type="text"] {
+    flex: 1;
+}
+
+.option-row input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    outline: none;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-row input[type="radio"]:checked {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.option-row input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+/* Buttons */
+.add-option-btn,
+.remove-option-btn,
+.remove-question-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.add-option-btn {
+    color: var(--success-color);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.add-option-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: scale(1.1);
+}
+
+.remove-option-btn {
+    color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.remove-option-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f8fafc;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.3);
+    transform: translateY(-2px);
+}
+
+.add-question-btn {
+    background: rgba(59, 130, 246, 0.1);
+    color: #f8fafc;
+    border: 1px dashed rgba(59, 130, 246, 0.3);
+    padding: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 2rem 0;
+    font-weight: 500;
+}
+
+.add-question-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-3px);
+    box-shadow: var(--accent-glow);
+}
+
+.add-question-btn i {
+    font-size: 1.2rem;
+    color: #3b82f6;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.form-actions button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-actions .btn-primary {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.form-actions .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .manual-quiz-form {
+        padding: 1.5rem;
+    }
+    
+    .question-block {
+        padding: 1.2rem;
+    }
+}
+
+/* Error States */
+.manual-quiz-form .error {
+    border-color: var(--danger-color) !important;
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.3) !important;
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.error-message i {
+    font-size: 0.9rem;
+}
