@@ -8,6 +8,7 @@
 }
 
 .navbar {
+   margin-top: 30rem;
     background: #2c3e50;
     color: white;
     padding: 1rem 2rem;
@@ -43,11 +44,13 @@
 .dashboard-container {
     padding: 2rem;
     flex-grow: 1;
+  
 }
 
 .dashboard-container h1 {
     margin-bottom: 2rem;
     color: #2c3e50;
+
 }
 
 .dashboard-grid {
@@ -146,13 +149,15 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin-top: 14rem;
-}.faculty-quick-stats {
+    margin-top: 2rem;
+}
+
+.faculty-quick-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
-    margin-top: 20rem;  /* Added this line */
+    margin-top: 20rem;
 }
 
 .quiz-stats-card {

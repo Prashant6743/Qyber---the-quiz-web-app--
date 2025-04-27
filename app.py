@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -127,6 +127,34 @@ def faculty_profile():
                              'total_attempts': total_attempts,
                              'avg_score': round(avg_score, 1)
                          })
+
+@app.route('/edit-faculty-profile', methods=['GET', 'POST'])
+def edit_faculty_profile():
+    if session.get('role') != 'faculty':
+        return redirect(url_for('login'))
+    
+    current_user = User.query.get(session['user_id'])
+    
+    if request.method == 'POST':
+        # Update user information
+        current_user.username = request.form.get('username')
+        current_user.email = request.form.get('email')
+        
+        # If password is provided, update it
+        new_password = request.form.get('new_password')
+        if new_password and len(new_password) > 0:
+            current_user.password = generate_password_hash(new_password)
+        
+        # Save changes
+        db.session.commit()
+        
+        # Flash a success message
+        flash('Profile updated successfully!', 'success')
+        
+        # Redirect back to profile page
+        return redirect(url_for('faculty_profile'))
+    
+    return render_template('edit_faculty_profile.html', current_user=current_user)
 
 @app.route('/faculty-dashboard')
 def faculty_dashboard():
@@ -510,7 +538,39 @@ def view_attempt_details(attempt_id):
                            student_answers=student_answers,
                            correct_answers=correct_answers)
 
+@app.route('/delete-quiz/<int:quiz_id>', methods=['POST'])
+def delete_quiz(quiz_id):
+    if session.get('role') != 'faculty':
+        return jsonify({'success': False, 'message': 'Unauthorized access'}), 401
+    
+    quiz = Quiz.query.get_or_404(quiz_id)
+    
+    # Ensure the faculty owns this quiz
+    if quiz.creator_id != session['user_id']:
+        return jsonify({'success': False, 'message': 'You do not have permission to delete this quiz'}), 403
+    
+    try:
+        # First, delete all options for each question
+        for question in quiz.questions:
+            Option.query.filter_by(question_id=question.id).delete()
+        
+        # Next, delete all questions
+        Question.query.filter_by(quiz_id=quiz.id).delete()
+        
+        # Next, delete all attempts
+        QuizAttempt.query.filter_by(quiz_id=quiz.id).delete()
+        
+        # Finally, delete the quiz itself
+        db.session.delete(quiz)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Quiz deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting quiz: {e}")
+        return jsonify({'success': False, 'message': 'An error occurred while deleting the quiz'}), 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5003)

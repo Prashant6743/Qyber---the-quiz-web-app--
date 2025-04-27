@@ -27,6 +27,7 @@
         }
         
         .attempt-title h1 {
+            margin-top:30rem;
             font-size: 2rem;
             margin-bottom: 0.5rem;
             color: var(--text-light);
@@ -46,6 +47,7 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 2rem;
+            margin-top: 30rem;
         }
         
         .score-value {
@@ -218,6 +220,21 @@
     </style>
 </head>
 <body class="dashboard-body">
+    <!-- Main Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fas fa-graduation-cap"></i> Quiz System</div>
+        <div class="nav-links">
+            {% if session.get('role') == 'faculty' %}
+                <a href="{{ url_for('faculty_dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('student_dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            {% endif %}
+        </div>
+        <div class="nav-user">
+            <span><i class="fas fa-user-circle"></i> {{ session.get('username', 'User') }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
 
     <div class="attempt-details-container">
         <div class="attempt-header">

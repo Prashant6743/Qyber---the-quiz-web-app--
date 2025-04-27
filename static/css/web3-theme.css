@@ -53,16 +53,72 @@ body::before {
     overflow-x: hidden;
 }
 
-/* Modern Navbar */
+/* Modern Navbar with Morphing Effect */
 .navbar {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     padding: 1rem 2rem;
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 1rem;
+}
+
+/* Morphing background effect */
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        rgba(59, 130, 246, 0.08) 0%,
+        rgba(139, 92, 246, 0.08) 25%, 
+        rgba(6, 182, 212, 0.08) 50%,
+        rgba(236, 72, 153, 0.08) 75%,
+        rgba(59, 130, 246, 0.08) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientFlow 15s ease infinite;
+    z-index: -1;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Glowing border effect */
+.navbar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(59, 130, 246, 0.3),
+        rgba(139, 92, 246, 0.3),
+        rgba(6, 182, 212, 0.3),
+        rgba(236, 72, 153, 0.3),
+        transparent
+    );
+    animation: borderGlow 8s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
 }
 
 .nav-brand {
@@ -106,15 +162,59 @@ body::before {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     border: 1px solid transparent;
+    overflow: hidden;
+    z-index: 1;
 }
 
-/* HOVER EFFECT 1: Glow and scale */
+/* Glowing underline effect */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+    transition: width 0.3s ease, left 0.3s ease;
+    transform: translateX(-50%);
+    z-index: -1;
+    opacity: 0;
+}
+
+/* Shimmering background effect */
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.7s ease;
+    z-index: -1;
+}
+
+/* HOVER EFFECT: Glow, scale, and shimmer */
 .nav-link:hover, .nav-link.active {
     color: var(--text-light);
     transform: translateY(-2px) scale(1.05);
     background: rgba(59, 130, 246, 0.1);
     border: 1px solid rgba(59, 130, 246, 0.3);
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+    width: 80%;
+    opacity: 1;
+}
+
+.nav-link:hover::before {
+    left: 100%;
 }
 
 .nav-link i {
@@ -133,12 +233,186 @@ body::before {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Animated gradient border */
+.logout-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+        45deg,
+        var(--danger),
+        #ff6b6b,
+        #ff4757,
+        var(--danger)
+    );
+    z-index: -2;
+    border-radius: 10px;
+    background-size: 400% 400%;
+    animation: borderRotate 4s ease infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@keyframes borderRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Inner background */
+.logout-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--danger), #b91c1c);
+    z-index: -1;
+    border-radius: 7px;
+    transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.logout-btn:hover::before {
+    opacity: 1;
+}
+
+.logout-btn:hover::after {
     background: linear-gradient(135deg, #ef4444, #991b1b);
+    opacity: 0.9;
+}
+
+.logout-btn i {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.logout-btn:hover i {
+    transform: translateX(3px);
+}
+
+/* Nav User Styles */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-user span, .nav-user-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    background: rgba(59, 130, 246, 0.05);
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Morphing background effect */
+.nav-user span::before, .nav-user-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(59, 130, 246, 0.05) 0%, 
+        rgba(139, 92, 246, 0.05) 50%, 
+        rgba(6, 182, 212, 0.05) 100%);
+    background-size: 200% 200%;
+    animation: userGradientFlow 8s ease infinite;
+    z-index: -1;
+}
+
+@keyframes userGradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Glowing border effect */
+.nav-user span::after, .nav-user-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+    transition: width 0.4s ease;
+    z-index: -1;
+}
+
+.nav-user span:hover, .nav-user-link:hover, .nav-user-link.active {
+    transform: translateY(-2px);
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.nav-user span:hover::after, .nav-user-link:hover::after, .nav-user-link.active::after {
+    width: 100%;
+}
+
+.nav-user span i, .nav-user-link i {
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Pulsing glow effect for icons */
+.nav-user span i::after, .nav-user-link i::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--accent-blue) 0%, transparent 70%);
+    top: 0;
+    left: 0;
+    opacity: 0;
+    filter: blur(6px);
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.nav-user span:hover i, .nav-user-link:hover i, .nav-user-link.active i {
+    transform: scale(1.2);
+    color: var(--accent-cyan);
+}
+
+.nav-user span:hover i::after, .nav-user-link:hover i::after, .nav-user-link.active i::after {
+    opacity: 0.5;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 0.3; }
+    100% { transform: scale(1); opacity: 0.5; }
 }
 
 /* Cards and Containers */
@@ -146,6 +420,7 @@ body::before {
     text-align: center;
     margin: 2.5rem 0;
     position: relative;
+    margin-top: 30rem;
 }
 
 .dashboard-header h1 {
@@ -464,8 +739,8 @@ body::before {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2.5rem;
-    margin-top: 8rem;
-    padding-top: 13rem;
+    margin-top: 20rem;
+    padding-top: 0;
     position: relative;
     z-index: 5;
 }

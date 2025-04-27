@@ -112,6 +112,13 @@
     </style>
 </head>
 <body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fas fa-graduation-cap"></i> Quiz System</div>
+        <div class="nav-user">
+            <span><i class="fas fa-user-circle"></i> {{ current_user.username }}</span>
+            <a href="{{ url_for('student_dashboard') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </nav>
 
     <div class="dashboard-container">
         <div class="quiz-container">

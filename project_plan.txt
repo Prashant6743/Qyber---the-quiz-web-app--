@@ -65,3 +65,7 @@ Project Structure:
     app.py
     config.py
     requirements.txt
+
+after that ui ko moren krna h 
+background me 3d animation add krna h 
+ai quiz make ko add krna  H 

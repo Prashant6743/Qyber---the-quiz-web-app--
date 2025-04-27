@@ -269,6 +269,18 @@
     </style>
 </head>
 <body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fas fa-graduation-cap"></i> Quiz System</div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#available-quizzes" class="nav-link"><i class="fas fa-book"></i> Available Quizzes</a>
+            <a href="#my-attempts" class="nav-link"><i class="fas fa-history"></i> My Attempts</a>
+        </div>
+        <div class="nav-user">
+            <span><i class="fas fa-user-circle"></i> {{ current_user.username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
 
     <div class="student-dashboard">
         <div class="dashboard-header">

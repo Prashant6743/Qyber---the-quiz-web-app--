@@ -13,6 +13,21 @@ body {
     justify-content: center;
 }
 
+/* (If you had navbar styles previously, restore them here. Otherwise, you can remove the navbar block or keep the minimal version below) */
+
+/* Example minimal navbar style (remove if not needed):
+.navbar {
+    width: 100%;
+    background: #2c3e50;
+    color: white;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+*/
+
+
 .login-container {
     background: white;
     padding: 2rem;
