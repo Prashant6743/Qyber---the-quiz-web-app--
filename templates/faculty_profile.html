@@ -8,6 +8,142 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/web3-theme.css') }}">
     <style>
+        /* Modern Header Styles */
+        .modern-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.75rem 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .logo i {
+            color: var(--accent-blue);
+            font-size: 1.75rem;
+        }
+        
+        .modern-nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+        
+        .nav-menu li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu li a:hover {
+            color: white;
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .nav-menu li a i {
+            color: var(--accent-blue);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-link:hover, .profile-link.active {
+            background: rgba(59, 130, 246, 0.3);
+        }
+        
+        .profile-link i {
+            font-size: 1.25rem;
+            color: var(--accent-blue);
+        }
+        
+        .logout-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-link:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: rotate(15deg);
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-menu {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
         /* Profile specific styles */
         .profile-container {
             max-width: 1200px;
@@ -376,22 +512,34 @@
     </style>
 </head>
 <body class="dashboard-body">
-    <!-- Main Navigation -->
-    <nav class="navbar">
-        <div class="nav-brand"><i class="fas fa-graduation-cap"></i> Quiz System</div>
-        <div class="nav-links">
-            <a href="{{ url_for('faculty_dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="{{ url_for('faculty_dashboard') }}#create-quiz-section" class="nav-link"><i class="fas fa-plus-circle"></i> Create Quiz</a>
-            <a href="{{ url_for('faculty_dashboard') }}#quiz-history-section" class="nav-link"><i class="fas fa-history"></i> Quiz History</a>
-            <a href="{{ url_for('faculty_dashboard') }}#student-records-section" class="nav-link"><i class="fas fa-user-graduate"></i> Student Records</a>
+    <!-- Modern Navigation Bar -->
+    <header class="modern-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Qyber</span>
+            </div>
+            
+            <nav class="modern-nav">
+                <ul class="nav-menu">
+                    <li><a href="{{ url_for('faculty_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="{{ url_for('faculty_dashboard') }}#create-quiz-section"><i class="fas fa-plus-circle"></i> Create Quiz</a></li>
+                    <li><a href="{{ url_for('faculty_dashboard') }}#quiz-history-section"><i class="fas fa-history"></i> History</a></li>
+                    <li><a href="{{ url_for('faculty_dashboard') }}#student-records-section"><i class="fas fa-user-graduate"></i> Students</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-actions">
+                <a href="{{ url_for('faculty_profile') }}" class="profile-link active">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ current_user.username }}</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
         </div>
-        <div class="nav-user">
-            <a href="{{ url_for('faculty_profile') }}" class="nav-user-link active">
-                <span><i class="fas fa-user-circle"></i> {{ current_user.username }}</span>
-            </a>
-            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </nav>
+    </header>
 
     <!-- Floating particles background -->
     <div class="particles" id="particles">

@@ -1,0 +1,20 @@
+{
+  "name": "capstone-project-new",
+  "version": "1.0.0",
+  "description": "![Qyber Logo](qyber.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prashant6743/Qyber---the-quiz-web-app--.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prashant6743/Qyber---the-quiz-web-app--/issues"
+  },
+  "homepage": "https://github.com/Prashant6743/Qyber---the-quiz-web-app--#readme"
+}

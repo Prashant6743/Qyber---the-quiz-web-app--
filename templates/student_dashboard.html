@@ -266,19 +266,154 @@
                 justify-content: center;
             }
         }
+        /* AI Quiz Button Styles */
+        .ai-quiz-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .ai-quiz-button {
+            width: 200px;
+            height: 200px;
+            background: #e6f2ff;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 25rem;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .ai-quiz-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25);
+        }
+        
+        .ai-quiz-icon {
+            font-size: 3.5rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-quiz-text {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            font-weight: 500;
+            text-align: center;
+        }
+        /* Student Navigation Bar Styles */
+        .student-navbar {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .student-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .student-brand i {
+            font-size: 1.75rem;
+        }
+        
+        .student-nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .student-nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .student-nav-link:hover,
+        .student-nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .student-nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .student-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .student-logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .student-logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Adjust main content for fixed navbar */
+        .dashboard-body {
+            padding-top: 70px;
+        }
     </style>
 </head>
 <body class="dashboard-body">
-    <nav class="navbar">
-        <div class="nav-brand"><i class="fas fa-graduation-cap"></i> Quiz System</div>
-        <div class="nav-links">
-            <a href="#" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="#available-quizzes" class="nav-link"><i class="fas fa-book"></i> Available Quizzes</a>
-            <a href="#my-attempts" class="nav-link"><i class="fas fa-history"></i> My Attempts</a>
+    <!-- Student Navigation Bar -->
+    <nav class="student-navbar">
+        <div class="student-brand">
+            <i class="fas fa-graduation-cap"></i> Qyber Student Portal
         </div>
-        <div class="nav-user">
-            <span><i class="fas fa-user-circle"></i> {{ current_user.username }}</span>
-            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="student-nav-links">
+            <a href="#" class="student-nav-link active"><i class="fas fa-home"></i> Home</a>
+            <a href="#available-quizzes" class="student-nav-link"><i class="fas fa-book"></i> Quizzes</a>
+            <a href="#my-attempts" class="student-nav-link"><i class="fas fa-history"></i> My Attempts</a>
+            <a href="#" class="student-nav-link"><i class="fas fa-robot"></i> AI Quiz</a>
+        </div>
+        <div class="student-nav-user">
+            <div class="student-user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ current_user.username }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="student-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </div>
     </nav>
 
@@ -286,6 +421,16 @@
         <div class="dashboard-header">
             <h1>Student Dashboard</h1>
             <p>Welcome to your learning portal. Take quizzes and track your progress.</p>
+        </div>
+        
+        <!-- AI Quiz Button Section -->
+        <div class="ai-quiz-button-container">
+            <a href="http://localhost:9002" class="ai-quiz-button">
+                <div class="ai-quiz-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ai-quiz-text">Create AI Quiz</div>
+            </a>
         </div>
         
         <div class="dashboard-grid">
