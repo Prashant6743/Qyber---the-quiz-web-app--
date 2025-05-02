@@ -1,364 +1,89 @@
-# Qyber - The Interactive Quiz Web Application
+# Qyber - Interactive Quiz Web Application
 
 ![Qyber Logo](qyber.png)
 
 ## Overview
 
-Qyber is a modern, feature-rich web application designed for creating, managing, and taking quizzes in educational environments. Built with a focus on user experience and functionality, Qyber provides distinct interfaces for faculty members and students, enabling a comprehensive quiz management ecosystem.
+Qyber is a modern web application for creating, managing, and taking quizzes in educational environments. It provides distinct interfaces for faculty members and students, enabling a comprehensive quiz management ecosystem.
 
-Faculty members can create custom quizzes, generate AI-powered questions, and analyze student performance, while students can take quizzes, track their progress, and review their past attempts through an intuitive dashboard.
+## Key Features
 
-## 🌟 Key Features
-
-### For Faculty Members
-
-- **Quiz Creation and Management**
-  - Create custom quizzes with multiple-choice questions
-  - Edit existing quizzes and add new questions at any time
-  - Organize quizzes by topic and difficulty level
-
-- **AI-Powered Quiz Generation**
-  - Generate quizzes automatically using AI technology
-  - Customize AI-generated quizzes by topic, difficulty, and length
-  - Edit AI-generated content to fit specific teaching needs
-
-- **Performance Analytics**
-  - View detailed quiz results and student performance metrics
-  - Track class progress with visual analytics
-  - Identify knowledge gaps and areas for improvement
-
-- **Profile Management**
-  - Personalized faculty dashboard with customizable settings
-  - Update profile information and credentials
-  - Manage all created quizzes from a central location
+### For Faculty
+- Create and manage custom quizzes
+- Generate AI-powered questions
+- Analyze student performance
+- Manage faculty profile
 
 ### For Students
+- Take quizzes through an intuitive interface
+- Generate custom practice quizzes with AI
+- Track progress and performance
+- Access personalized dashboard
 
-- **Interactive Quiz Interface**
-  - Take quizzes through a clean, intuitive interface
-  - Receive immediate feedback on quiz performance
-  - View detailed explanations for correct answers
+## Technology Stack
 
-- **AI Quiz Generation**
-  - Generate custom practice quizzes on any topic
-  - Select difficulty level and number of questions
-  - Access AI-powered learning resources
+- **Backend**: Python Flask, SQLAlchemy
+- **Database**: SQLite (scalable to PostgreSQL/MySQL)
+- **Frontend**: HTML5, CSS3, JavaScript
+- **AI Integration**: Next.js-based AI Quiz Generator
 
-- **Progress Tracking**
-  - View comprehensive score history and performance metrics
-  - Track improvement over time with visual progress indicators
-  - Review past quiz attempts with detailed feedback
+## How to Run
 
-- **Personalized Dashboard**
-  - Access all available quizzes from a central dashboard
-  - View recent attempts and performance statistics
-  - Navigate easily between different sections of the application
+### Main Application
+```bash
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-## 🛠️ Technology Stack
+# Install dependencies
+pip install -r requirements.txt
 
-- **Backend Framework**
-  - Python Flask (v2.0.1) - Lightweight and flexible web framework
-  - SQLAlchemy (v1.4.23) - SQL toolkit and Object-Relational Mapping (ORM) library
-
-- **Database**
-  - SQLite - Embedded relational database for local development
-  - Scalable to PostgreSQL or MySQL for production environments
-
-- **Frontend**
-  - HTML5, CSS3 for structure and styling
-  - JavaScript for interactive elements
-  - Font Awesome for iconography
-  - Responsive design principles for cross-device compatibility
-
-- **Authentication & Security**
-  - Custom session-based authentication system
-  - Password hashing with Werkzeug security
-  - CSRF protection for form submissions
-
-- **UI/UX**
-  - Modern, responsive design with web3-themed elements
-  - Intuitive navigation and user-friendly interfaces
-  - Consistent visual language across all pages
-
-- **AI Integration**
-  - Next.js-based AI Quiz Generator (separate module)
-  - Integration with advanced AI models for quiz generation
-
-## 📋 Project Structure
-
+# Run the application
+python3 app.py
 ```
-qyber-quiz-app/
-├── app.py                 # Main application file and routes
-├── requirements.txt       # Python dependencies
-├── instance/              # Instance-specific data (database)
-│   └── quiz.db           # SQLite database
-├── static/                # Static assets
-│   ├── css/              # Stylesheets
-│   ├── js/               # JavaScript files
-│   └── img/              # Images and icons
-├── templates/             # HTML templates
-│   ├── faculty_*.html    # Faculty-specific templates
-│   ├── student_*.html    # Student-specific templates
-│   └── *.html            # Shared templates
-└── ai-quiz-maker-main/   # AI Quiz Generator module (Next.js)
+Access at: http://localhost:5004
+
+### AI Quiz Generator
+```bash
+# In a separate terminal
+cd ai-quiz-maker-main
+npm install
+npm run dev
+```
+Access at: http://localhost:9003
+
+## Default Login Credentials
+
+- **Faculty**: Username: `faculty`, Password: `password`
+- **Student**: Username: `student`, Password: `password`
+
+## Clear Database Cache
+
+To reset the database:
+```bash
+python3 clear_db_cache.py
 ```
 
-## 🚀 Installation and Setup
+## Author
 
-### Prerequisites
+**Prashant Kumar**
 
-- Python 3.8 or higher
-- Node.js 14.x or higher (for AI Quiz Generator)
-- npm or yarn (for AI Quiz Generator)
+## Contact
 
-### Main Application Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/qyber-quiz-app.git
-   cd qyber-quiz-app
-   ```
-
-2. **Create and activate a virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install required dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Initialize the database**
-   ```bash
-   python create_sample_data.py  # Optional: Creates sample quizzes and users
-   ```
-
-5. **Run the application**
-   ```bash
-   python app.py
-   ```
-   The application will be available at `http://localhost:5004`
-
-### AI Quiz Generator Setup
-
-1. **Navigate to the AI Quiz Generator directory**
-   ```bash
-   cd ai-quiz-maker-main
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Run the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-   The AI Quiz Generator will be available at `http://localhost:9003`
-
-## 🏃‍♂️ How to Run the Application
-
-### Running the Main Flask Application
-
-1. **Ensure you are in the root directory of the project**
-
-2. **Activate your virtual environment if not aly activated**
-   ```bash
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Start the Flask server**
-   ```bash
-   python3 app.py
-   ```
-   This will start the Flask server on port 5004. You can access the application by opening a web browser and navigating to:
-   ```
-   http://localhost:5004
-   ```
-
-4. **Login with the default credentials**
-   - For Faculty access: Username: `faculty`, Password: `password`
-   - For Student access: Username: `student`, Password: `password`
-
-### Running the AI Quiz Generator
-
-1. **Open a new terminal window**
-
-2. **Navigate to the AI Quiz Generator directory**
-   ```bash
-   cd ai-quiz-maker-main
-   ```
-
-3. **Start the Next.js development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-   This will start the Next.js server on port 9003. The AI Quiz Generator will be accessible at:
-   ```
-   http://localhost:9003
-   ```
-
-### Running Both Components Simultaneously
-
-For the full functionality of Qyber, both the main Flask application and the AI Quiz Generator need to be running simultaneously:
-
-1. **Start the Flask application in one terminal window**
-   ```bash
-   # In the project root directory
-   python3 app.py
-   ```
-
-2. **Start the AI Quiz Generator in another terminal window**
-   ```bash
-   # In the ai-quiz-maker-main directory
-   npm run dev
-   ```
-
-3. **Access the complete application through the main Flask interface**
-   ```
-   http://localhost:5004
-   ```
-   The system will automatically communicate with the AI Quiz Generator when needed.
-
-## 🔐 Default Login Credentials
-
-### Faculty
-- Username: `faculty`
-- Password: `password`
-- Role: Select "Faculty" when logging in
-
-### Student
-- Username: `student`
-- Password: `password`
-- Role: Select "Student" when logging in
-
-## 📱 Usage Guide
-
-### For Faculty Members
-
-1. **Login** using faculty credentials
-2. Navigate to the **Faculty Dashboard**
-3. To create a new quiz:
-   - Click on "Create Quiz"
-   - Fill in quiz details and add questions
-   - Save the quiz
-4. To generate an AI quiz:
-   - Click on "Generate AI Quiz"
-   - Enter the topic, difficulty, and number of questions
-   - Review and edit the generated quiz
-   - Save the quiz
-5. To view student performance:
-   - Navigate to the "Quiz Results" section
-   - Select a specific quiz to view detailed analytics
-
-### For Students
-
-1. **Login** using student credentials
-2. Navigate to the **Student Dashboard**
-3. To take a quiz:
-   - Browse available quizzes
-   - Click on "Start Quiz" for your chosen quiz
-   - Answer questions and submit
-   - View your results
-4. To generate an AI practice quiz:
-   - Click on the "Create AI Quiz" button
-   - Enter your preferred topic, difficulty, and length
-   - Take the generated quiz
-5. To review past attempts:
-   - Navigate to the "My Attempts" section
-   - Select an attempt to view detailed feedback
-
-## 🤝 Contributing
-
-Contributions to Qyber are welcome! Please follow these steps to contribute:
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature-name`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some feature'`)
-5. Push to the branch (`git push origin feature/your-feature-name`)
-6. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 Contact and Support
-
-For questions, feedback, or support, please contact:
-- Email: support@qyber-quiz.com
-- GitHub Issues: [Create a new issue](https://github.com/yourusername/qyber-quiz-app/issues)
-
----
-
-© 2025 Qyber Quiz. All rights reserved.
-
-## Usage
-
-1. Start the application:
-   ```
-   python app.py
-   ```
-
-2. Open your web browser and navigate to:
-   ```
-   http://localhost:5002
-   ```
-
-3. Log in using your credentials:
-   - For faculty access, use faculty role
-   - For student access, use student role
-
-## Project Structure
-
-```
-/qyber-quiz-app
-    /static
-        /css          # Stylesheets
-        /js           # JavaScript files
-    /templates        # HTML templates
-    /instance         # Database files
-    app.py            # Main application file
-    requirements.txt  # Dependencies
-```
-
-## Database Schema
-
-- **User**: Stores user information and credentials
-- **Quiz**: Contains quiz metadata and relationships
-- **Question**: Stores questions for each quiz
-- **Option**: Contains options for each question
-- **QuizAttempt**: Records student quiz attempts and scores
-
-## Future Enhancements
-
-- Ai Quiz maker with case base study 
-]- Quiz categories and tags
-- Advanced analytics for faculty
-- Timed quizzes
-- Social sharing features
-- Mobile application
--tab switch restriction
+Email: prashantcodezz@gmail.com
 
 ## License
 
-[MIT License](LICENSE)
+MIT
 
-## Contributors
+## Note on Running the Application
 
-- [Your Name](https://github.com/prashant6743)
+This application requires running two environments simultaneously:
+1. The main Flask application for the quiz system
+2. The AI Quiz Generator component
 
+After starting both servers, copy the AI Quiz Generator URL (http://localhost:9003) and paste it in the student panel's redirect link to enable AI quiz functionality.
 
-isme 2 environment run krna h 
-ai quiz ke liye locahost 
-ar normal quiz ke liye python flash use krna h 
-ar ai quiz wla hoshost id ko copy kr ke mai quiz ka student pannel me ia kr ai quiz wla me redirect link me past krna h 
+---
+
+© 2025 Qyber Quiz | Developed by Prashant Kumar
