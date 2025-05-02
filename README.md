@@ -139,7 +139,7 @@ qyber-quiz-app/
    ```bash
    python app.py
    ```
-   The application will be available at `http://localhost:5003`
+   The application will be available at `http://localhost:5004`
 
 ### AI Quiz Generator Setup
 
@@ -161,7 +161,73 @@ qyber-quiz-app/
    # or
    yarn dev
    ```
-   The AI Quiz Generator will be available at `http://localhost:9002`
+   The AI Quiz Generator will be available at `http://localhost:9003`
+
+## 🏃‍♂️ How to Run the Application
+
+### Running the Main Flask Application
+
+1. **Ensure you are in the root directory of the project**
+
+2. **Activate your virtual environment if not already activated**
+   ```bash
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Start the Flask server**
+   ```bash
+   python3 app.py
+   ```
+   This will start the Flask server on port 5004. You can access the application by opening a web browser and navigating to:
+   ```
+   http://localhost:5004
+   ```
+
+4. **Login with the default credentials**
+   - For Faculty access: Username: `faculty`, Password: `password`
+   - For Student access: Username: `student`, Password: `password`
+
+### Running the AI Quiz Generator
+
+1. **Open a new terminal window**
+
+2. **Navigate to the AI Quiz Generator directory**
+   ```bash
+   cd ai-quiz-maker-main
+   ```
+
+3. **Start the Next.js development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   This will start the Next.js server on port 9003. The AI Quiz Generator will be accessible at:
+   ```
+   http://localhost:9003
+   ```
+
+### Running Both Components Simultaneously
+
+For the full functionality of Qyber, both the main Flask application and the AI Quiz Generator need to be running simultaneously:
+
+1. **Start the Flask application in one terminal window**
+   ```bash
+   # In the project root directory
+   python3 app.py
+   ```
+
+2. **Start the AI Quiz Generator in another terminal window**
+   ```bash
+   # In the ai-quiz-maker-main directory
+   npm run dev
+   ```
+
+3. **Access the complete application through the main Flask interface**
+   ```
+   http://localhost:5004
+   ```
+   The system will automatically communicate with the AI Quiz Generator when needed.
 
 ## 🔐 Default Login Credentials
 
@@ -290,3 +356,9 @@ For questions, feedback, or support, please contact:
 ## Contributors
 
 - [Your Name](https://github.com/prashant6743)
+
+
+isme 2 environment run krna h 
+ai quiz ke liye locahost 
+ar normal quiz ke liye python flash use krna h 
+ar ai quiz wla hoshost id ko copy kr ke mai quiz ka student pannel me ia kr ai quiz wla me redirect link me past krna h 
