@@ -3,6 +3,7 @@
 ![Qyber Logo](qyber.png)
 
 ## Overview
+build for our capstone project 
 
 Qyber is a modern web application for creating, managing, and taking quizzes in educational environments. It provides distinct interfaces for faculty members and students, enabling a comprehensive quiz management ecosystem.
 
